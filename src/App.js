@@ -1,31 +1,142 @@
-import logo from "./logo.svg";
-import "./App.css";
-import Main from "./components/Main";
-import Body from "./components/Body";
+import React, { useState } from 'react';
 
-function App() {
+const App = () => {
+  const [quantity, setQuantity] = useState(0);
+
+  const images = [
+    { id: 1, src: '/image-product-1.jpg', thumbnail: '/image-product-1-thumbnail.jpg', alt: 'Main view of sneaker' },
+    { id: 2, src: '/image-product-2.jpg', thumbnail: '/image-product-2-thumbnail.jpg', alt: 'Sneaker thumbnail 1' },
+    { id: 3, src: '/image-product-3.jpg', thumbnail: '/image-product-3-thumbnail.jpg', alt: 'Sneaker thumbnail 2' },
+    { id: 4, src: '/image-product-4.jpg', thumbnail: '/image-product-4-thumbnail.jpg', alt: 'Sneaker thumbnail 3' },
+  ];
+  const [activeImageId, setActiveImageId] = useState(images[0].id);
+
+  const handleIncrement = () => setQuantity(prev => prev + 1);
+  const handleDecrement = () => setQuantity(prev => (prev > 0 ? prev - 1 : 0));
+
   return (
-    <>
-      <Main />
-      
-    </>
-    // <div className="App">
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <p>
-    //       Edit <code>src/App.js</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-    // </div>
+    <div className="min-h-screen bg-white">
+      {/* --- Top Navigation Bar --- */}
+      <header className="flex items-center justify-between px-8 py-4 border-b">
+        <div className="flex items-center space-x-12">
+          <h1 className="text-3xl font-bold">sneakers</h1>
+          <nav className="hidden md:flex space-x-6 text-gray-500">
+            <a href="#" className="hover:text-black">Collections</a>
+            <a href="#" className="hover:text-black">Men</a>
+            <a href="#" className="hover:text-black">Women</a>
+            <a href="#" className="hover:text-black">About</a>
+            <a href="#" className="hover:text-black">Contact</a>
+          </nav>
+        </div>
+        <div className="flex items-center space-x-6">
+          <button aria-label="Shopping Cart" className="text-gray-500 hover:text-black">
+            {/* Replace with an actual SVG/icon for cart */}
+            🛒
+          </button>
+          <img src="/image-avatar.png" alt="User Avatar" className="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-orange-500" />
+        </div>
+      </header>
+
+      {/* --- Main Product Content --- */}
+      <main className="max-w-6xl mx-auto py-24 px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        
+        {/* === Left: Image Gallery === */}
+        <div className="space-y-6">
+          {/* Main Product Image (Placeholder for Image with Orange Background) */}
+          {/* Note: The specific background gradient/color on the image requires styling the image container or using a background image/SVG */}
+          <div className="relative rounded-xl overflow-hidden shadow-xl" style={{ backgroundColor: '#f9a825', height: '450px' }}>
+            {/* The image in the design has a complex background. For a simple implementation, we'll use a placeholder or assume the image asset includes this background. */}
+            <img
+              src={images.find(img => img.id === activeImageId)?.src}
+              alt={images.find(img => img.id === activeImageId)?.alt}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          
+          {/* Thumbnail Gallery */}
+          <div className="flex justify-between space-x-6">
+            {images.map((img) => (
+              <div 
+                key={img.id}
+                className={`relative w-1/4 cursor-pointer rounded-xl overflow-hidden transition-all duration-200 
+                  ${activeImageId === img.id ? 'border-2 border-orange-500' : ''}`}
+                onClick={() => setActiveImageId(img.id)}
+              >
+                <img
+                  src={img.thumbnail}
+                  alt={img.alt}
+                  className={`w-full h-full object-cover rounded-xl transition-opacity duration-200
+                    ${activeImageId === img.id ? 'opacity-30' : 'hover:opacity-60'}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* === Right: Product Details === */}
+        <div className="space-y-6 lg:pl-12">
+          <p className="text-sm font-bold tracking-widest uppercase text-orange-500">
+            SNEAKER COMPANY
+          </p>
+
+          <h2 className="text-5xl font-bold leading-tight">
+            Fall Limited Edition Sneakers
+          </h2>
+
+          <p className="text-gray-500 pt-2">
+            These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.
+          </p>
+
+          <div className="flex flex-col space-y-2 pt-4">
+            <div className="flex items-center space-x-4">
+              <span className="text-3xl font-bold">
+                $125.00
+              </span>
+              <span className="text-sm font-bold text-orange-500 bg-orange-100 px-2 py-1 rounded-md">
+                50%
+              </span>
+            </div>
+            <span className="text-gray-400 line-through">
+              $250.00
+            </span>
+          </div>
+
+          {/* Quantity Selector and Add to Cart Button */}
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-6">
+            
+            {/* Quantity Selector */}
+            <div className="flex items-center justify-between bg-gray-100 rounded-lg p-3 sm:w-1/3">
+              <button 
+                onClick={handleDecrement} 
+                className="text-orange-500 font-bold text-2xl hover:opacity-75"
+                aria-label="Decrease quantity"
+              >
+                -
+              </button>
+              <span className="font-bold">{quantity}</span>
+              <button 
+                onClick={handleIncrement} 
+                className="text-orange-500 font-bold text-2xl hover:opacity-75"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+
+            {/* Add to Cart Button */}
+            <button 
+              className="flex items-center justify-center space-x-3 bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-xl shadow-orange-200 transition-all duration-200 hover:bg-orange-600 sm:w-2/3"
+              onClick={() => console.log(`Added ${quantity} items to cart`)}
+            >
+              {/* Replace with an actual SVG/icon for cart */}
+              🛒 
+              <span>Add to cart</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
   );
-}
+};
 
 export default App;
